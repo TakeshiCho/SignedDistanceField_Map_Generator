@@ -1,0 +1,82 @@
+#pragma kernel Process0
+#pragma kernel Process1
+
+uniform float4 _TexSize;
+uniform Texture2D Raw;
+uniform RWTexture2D<half2> DataProcess0;
+uniform RWTexture2D<half> Result;
+
+[numthreads(1,4,1)]
+void Process0 (uint2 id : SV_DispatchThreadID)
+{
+    float2 sdpr[2042]; /* Sqared distance Per Rows */
+    uint size = _TexSize.x;
+    float2 d = float2(999999,999999);
+    float2 sqr_d = float2(0,0);
+
+    for (uint i = 0; i < size; ++i)
+    {
+        float raw = Raw[uint2(i,id.y)].x;
+        if (raw < 1)
+        {
+            d.x = 0;
+            
+            d.y += 1;
+            sdpr[i] = float2(0,d.y * d.y);
+        }
+        else
+        {
+            d.x += 1;
+            sdpr[i] = float2(d.x * d.x,0);
+            
+            d.y = 0;
+        }
+    }
+
+    d = float2(999999,999999);
+    for (uint j = size - 1; j > 0; --j)
+    {
+        float raw = Raw[uint2(j,id.y)].x;
+        
+        if (raw < 1)
+        {
+            d.x = 0;
+            
+            d.y += 1;
+            sqr_d.y = d.y * d.y;
+        }
+        else
+        {
+            d.x += 1;
+            sqr_d.x = d.x * d.x;
+            
+            d.y = 0;
+        }
+        DataProcess0[uint2(j,id.y)] = float2(min(sqr_d.x,sdpr[j].x), min(sqr_d.y,sdpr[j].y));
+    }
+}
+
+[numthreads(32,32,1)]
+void Process1 (uint2 id : SV_DispatchThreadID)
+{
+    float2 sdpo; /* Sqared distance Per Orientation */
+    uint size = _TexSize.y;
+    float2 min_sqr_d = id.yy * id.yy + DataProcess0[uint2(id.x,0)];
+    
+    for (uint i = 1; i < size ; ++i)
+    {
+        uint2 dist = i - id.y;
+        float2 sqr_d = dist * dist;
+        sdpo = sqr_d + DataProcess0[uint2(id.x,i)];
+        min_sqr_d = min(sdpo, min_sqr_d);
+    }
+
+    if (min_sqr_d.x > 0)
+    {
+        Result[id] = sqrt(min_sqr_d.x)/size + 0.5;
+    }
+    else
+    {
+        Result[id] = 0.5 - sqrt(min_sqr_d.y)/size;
+    }
+}
