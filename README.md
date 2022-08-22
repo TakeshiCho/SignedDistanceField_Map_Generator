@@ -1,5 +1,4 @@
 # Signed Distance Field Map Generator
-Signed Distance Field Map Generator
 
 ### Examine Environment : 
 i7-9700 CPU\
