@@ -1,4 +1,4 @@
-# SignedDistanceField_Map_Generator
+# Signed Distance Field Map Generator
 Signed Distance Field Map Generator
 
 ### Examine Environment : 
