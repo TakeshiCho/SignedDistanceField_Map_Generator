@@ -152,8 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d9f2dcbab24e18a0dc6fd412529060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rawTex: {fileID: 2800000, guid: d38139445754af34f8a3946b39ac1154, type: 3}
-  savePath: Assets/SDF8ssedtCPU
+  rawTex: {fileID: 2800000, guid: 3b3259afcd1a5514c8ecadc33e9e3017, type: 3}
+  savePath: Assets/SignedDistanceField_Map_Generator
 --- !u!4 &107824285
 Transform:
   m_ObjectHideFlags: 0
@@ -199,8 +199,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SDFShader: {fileID: 7200000, guid: 10be58571ef9d9d40b770c4c0363f042, type: 3}
   RawTex:
-  - {fileID: 2800000, guid: d38139445754af34f8a3946b39ac1154, type: 3}
-  _sdfTex: []
+  - {fileID: 2800000, guid: 3b3259afcd1a5514c8ecadc33e9e3017, type: 3}
+  _sdfTex:
+  - {fileID: 2036228848}
 --- !u!4 &110645155
 Transform:
   m_ObjectHideFlags: 0
@@ -215,3 +216,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!84 &2036228848
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 3
+  m_Width: 512
+  m_Height: 512
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthFormat: 0
+  m_ColorFormat: 5
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
