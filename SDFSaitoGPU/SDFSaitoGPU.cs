@@ -83,7 +83,9 @@ namespace SDFSaitoGPU
             shader.SetTexture(process, "Result", sdf);
             shader.Dispatch(process, rawTex.width/32 , rawTex.height/32 , 1);
         }
-        private void OnDisable()
+
+        [ContextMenu("Clear")]
+        private void Clear()
         {
             foreach (var _rt in _sdfTex)
             {
@@ -102,6 +104,11 @@ namespace SDFSaitoGPU
             {
                 buffer.Release();
             }
+        }
+
+        private void OnDisable()
+        {
+            Clear();
         }
     }
 }
