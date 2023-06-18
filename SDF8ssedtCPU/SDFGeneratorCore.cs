@@ -17,6 +17,7 @@ namespace SDF8ssedtCPU
             public Type type;
             public int dx, dy;
             public int sqrDistance;
+
             public Pixel(Type type, int dx, int dy)
             {
                 this.type = type;
@@ -33,6 +34,8 @@ namespace SDF8ssedtCPU
             }
         }
 
+        static Pixel _emptyPixel = new Pixel(Type.Empty, 0, 0, MaxDistance);
+        
         private struct TexData
         {
             private int sizeX,sizeY;
@@ -44,12 +47,12 @@ namespace SDF8ssedtCPU
                 sizeY = y - 1;
             }
             
-            public Pixel GetPixel(int x, int y)
+            public ref Pixel GetPixel(int x, int y)
             {
                 if (x < 0 || x > sizeX || y < 0 || y > sizeY)
-                    return new Pixel(Type.Empty, 0, 0, 2147483647);
+                    return ref _emptyPixel;
                 else
-                    return pixels[x, y];
+                    return ref pixels[x, y];
             }
         }
         
@@ -65,7 +68,7 @@ namespace SDF8ssedtCPU
             GenerateSDF(ref whiteSideData, ref blackSideData, width, height);
 
             Texture2D newTex = new Texture2D(width, height);
-            WriteTex(newTex, in whiteSideData, in blackSideData, width, height);
+            WriteTex(newTex, ref whiteSideData, ref blackSideData, width, height);
             return newTex;
         }
         
@@ -76,44 +79,42 @@ namespace SDF8ssedtCPU
                 for (int x = 0; x < width; x++)
                 {
                     int value = (int)tex.GetPixel(x, y).r;
+                    Pixel e = new Pixel(Type.Empty, 0, 0, MaxDistance);
+                    
                     if (value == 1)
-                    {
-                        whiteSideData.pixels[x, y] = new Pixel(Type.Object, 0, 0, 0);
-                        blackSideData.pixels[x, y] = new Pixel(Type.Empty, 0, 0, MaxDistance);
-                    }
+                        blackSideData.pixels[x, y] = e;
                     else
-                    {
-                        whiteSideData.pixels[x, y] = new Pixel(Type.Empty, 0, 0, MaxDistance);
-                        blackSideData.pixels[x, y] = new Pixel(Type.Object, 0, 0, 0);
-                    }
+                        whiteSideData.pixels[x, y] = e;
                 }
             }
         }
 
-        void ComparePixel(ref TexData data, int x, int y, int offsetX, int offsetY)
+        void ComparePixel(ref Pixel pixel, ref TexData data, int x, int y, int offsetX, int offsetY)
         {
-            Pixel other = data.GetPixel(x + offsetX, y + offsetY);
-            if (other.sqrDistance == MaxDistance || other.sqrDistance >= data.pixels[x, y].sqrDistance)
+            ref Pixel comparedPixel = ref data.GetPixel(x + offsetX, y + offsetY);
+            if (comparedPixel.sqrDistance == MaxDistance || comparedPixel.sqrDistance >= pixel.sqrDistance)
                 return;
 
-            Pixel tmp = new Pixel(Type.Empty,other.dx + Abs(offsetX),other.dy + Abs(offsetY));
-            if (data.pixels[x, y].sqrDistance > tmp.sqrDistance)
+            Pixel tmp = new Pixel(Type.Empty,comparedPixel.dx + Abs(offsetX),comparedPixel.dy + Abs(offsetY));
+            if (pixel.sqrDistance > tmp.sqrDistance)
             {
-                data.pixels[x, y] = tmp;
+                pixel = tmp;
             }
         }
 
         void ComparePixels(ref TexData data, int x, int y, int ox0, int oy0, int ox1, int oy1)
         {
-            ComparePixel(ref data, x, y, ox0, oy0);
-            ComparePixel(ref data, x, y, ox1, oy1);
+            ref Pixel pixel = ref data.pixels[x, y];
+            ComparePixel(ref pixel, ref data, x, y, ox0, oy0);
+            ComparePixel(ref pixel, ref data, x, y, ox1, oy1);
         }
         
         void ComparePixels(ref TexData data, int x, int y, int ox0, int oy0, int ox1, int oy1, int ox2, int oy2)
         {
-            ComparePixel(ref data, x, y, ox0, oy0);
-            ComparePixel(ref data, x, y, ox1, oy1);
-            ComparePixel(ref data, x, y, ox2, oy2);
+            ref Pixel pixel = ref data.pixels[x, y];
+            ComparePixel(ref pixel, ref data, x, y, ox0, oy0);
+            ComparePixel(ref pixel, ref data, x, y, ox1, oy1);
+            ComparePixel(ref pixel, ref data, x, y, ox2, oy2);
         }
         
         void GenerateSDF(ref TexData whiteSideData, ref TexData blackSideData, int width, int height)
@@ -158,7 +159,7 @@ namespace SDF8ssedtCPU
             }
         }
 
-        void WriteTex(Texture2D texture, in TexData whiteSideDate, in TexData blackSideData, int width, int height)
+        void WriteTex(Texture2D texture, ref TexData whiteSideDate, ref TexData blackSideData, int width, int height)
         {
             float scale = height / 256f;
             for (int y = 0; y < height; y++)
