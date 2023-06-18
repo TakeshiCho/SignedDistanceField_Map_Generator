@@ -159,20 +159,22 @@ namespace SDF8ssedtCPU
             }
         }
 
-        void WriteTex(Texture2D texture, ref TexData whiteSideDate, ref TexData blackSideData, int width, int height)
+        void WriteTex(Texture2D texture, ref TexData whiteSideData, ref TexData blackSideData, int width, int height)
         {
+            Color[] colors = new Color[height * width];
             float scale = height / 256f;
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    float value1 = Sqrt(whiteSideDate.pixels[x, y].sqrDistance) / scale;
+                    float value1 = Sqrt(whiteSideData.pixels[x, y].sqrDistance) / scale;
                     float value2 = Sqrt(blackSideData.pixels[x, y].sqrDistance) / scale;
                     float v = (value1 - value2 + 128f) / 256f;
                     Color color = new Color(v, v, v);
-                    texture.SetPixel(x,y,color);
+                    colors[y * height + x] = color;
                 }
             }
+            texture.SetPixels(colors);
         }
         
     }
