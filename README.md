@@ -8,10 +8,10 @@ GPU: RTX 2060 / RTX 3070ti Laptop
 https://zhuanlan.zhihu.com/p/518292475
 
 | size |   i7-9700   | R9-6900HX |
-|:---: |:-----------:|:--------------:|
-| 2048 * 2048 |   5227ms    |     2513ms     |
-| 1024 * 2048 |   1261ms    |     574ms      |
-| 512 * 512  |    266ms    |     151ms      |
+|:---: |:-----------:|:---------:|
+| 2048 * 2048 |   5227ms    |  2082ms   |
+| 1024 * 2048 |   1261ms    |   438ms   |
+| 512 * 512  |    266ms    |   110ms   |
 
 ### Independent Scanning (Saito GPU)
 https://zhuanlan.zhihu.com/p/556295864
