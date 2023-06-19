@@ -8,7 +8,7 @@ namespace SDF8ssedtCPU
 {
     public class SDF8SsedtCPU : MonoBehaviour
     {
-        [SerializeField]private Texture2D rawTex;
+        [SerializeField] private Texture2D rawTex;
         [SerializeField] private string savePath;
 
         [ContextMenu("Generate SDF")]
